@@ -1,6 +1,6 @@
 terraform {
   backend "remote" {
-    # The name of your Terraform Cloud organization.
+    # The name of your Terraform Cloud Organization.
     organization = "jmcalalang-tf-organization"
 
     # The name of the Terraform Cloud workspace to store Terraform state files in.
