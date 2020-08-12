@@ -21,8 +21,11 @@ variable gcpRegion {
 variable gcpProjectId {
   description = "gcp project id"
 }
+#https://cloud.google.com/kubernetes-engine/docs/release-notes-regular
+#https://cloud.google.com/kubernetes-engine/versioning-and-upgrades
+#gcloud container get-server-config --region us-east1
 variable gkeVersion {
-  default = "1.16.9-gke.6"
+  default = "1.16.13-gke.1"
 }
 
 variable podCidr {
@@ -40,3 +43,27 @@ variable nginxCert {
   description = "cert for nginxplus"
 }
 # controller
+variable controllerLicense {
+  description = "license for controller"
+  default     = "none"
+}
+variable controllerBucket {
+  description = "name of controller installer bucket"
+  default     = "none"
+}
+variable controllerAccount {
+  description = "name of controller admin account"
+  default     = "admin@nginx-gcp.internal"
+}
+variable controllerPass {
+  description = "pass of controller admin account"
+  default     = "admin123!"
+}
+variable dbPass {
+  description = "pass of controller admin account"
+  default     = "naaspassword"
+}
+variable dbUser {
+  description = "pass of controller admin account"
+  default     = "naas"
+}

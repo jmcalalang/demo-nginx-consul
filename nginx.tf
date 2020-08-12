@@ -4,7 +4,7 @@ data template_file nginx_onboard {
   template = file("${path.module}/scripts/nginx/startup.sh.tpl")
 
   vars = {
-    MYVAR = "12134"
+    controllerAddress = "12134"
   }
 }
 resource google_compute_instance_template nginx-template {
@@ -35,7 +35,7 @@ resource google_compute_instance_template nginx-template {
     #shutdown-script = "${file("${path.module}/scripts/nginx/shutdown.sh")}"
   }
   service_account {
-    #email  = google_service_account.gce-nginx-sa.email
+    email  = google_service_account.gce-nginx-sa.email
     scopes = ["cloud-platform"]
   }
 }
@@ -43,6 +43,7 @@ resource google_compute_instance_template nginx-template {
 # instance group
 
 resource google_compute_instance_group_manager nginx-group {
+  depends_on         = [google_container_cluster.primary, google_compute_instance_group_manager.controller-group]
   name               = "${var.projectPrefix}-nginx-instance-group-manager"
   base_instance_name = "${var.projectPrefix}-nginx"
   zone               = var.gcpZone
@@ -50,5 +51,8 @@ resource google_compute_instance_group_manager nginx-group {
   version {
     instance_template = google_compute_instance_template.nginx-template.id
   }
-
+  # wait for gke cluster
+  timeouts {
+    create = "15m"
+  }
 }

@@ -3,7 +3,8 @@ data template_file controller_onboard {
   template = file("${path.module}/scripts/controller/startup.sh.tpl")
 
   vars = {
-    MYVAR = "12134"
+    bucket         = var.controllerBucket
+    serviceAccount = google_service_account.gce-controller-sa.email
   }
 }
 
@@ -37,7 +38,7 @@ resource google_compute_instance_template controller-template {
     #shutdown-script = "${file("${path.module}/scripts/controller/shutdown.sh")}"
   }
   service_account {
-    #email  = google_service_account.gce-controller-sa.email
+    email  = google_service_account.gce-controller-sa.email
     scopes = ["cloud-platform"]
   }
 }
@@ -45,6 +46,7 @@ resource google_compute_instance_template controller-template {
 # instance group
 
 resource google_compute_instance_group_manager controller-group {
+  depends_on         = [google_container_cluster.primary]
   name               = "${var.projectPrefix}-controller-instance-group-manager"
   base_instance_name = "${var.projectPrefix}-controller"
   zone               = var.gcpZone
@@ -52,5 +54,8 @@ resource google_compute_instance_group_manager controller-group {
   version {
     instance_template = google_compute_instance_template.controller-template.id
   }
-
+  # wait for gke cluster
+  timeouts {
+    create = "15m"
+  }
 }
